@@ -248,6 +248,7 @@
 		B482C35D16AB0B9400F1C41D /* x_filled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x_filled.png; sourceTree = "<group>"; };
 		B482C35E16AB0B9400F1C41D /* x_unfilled-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "x_unfilled-hd.png"; sourceTree = "<group>"; };
 		B482C35F16AB0B9400F1C41D /* x_unfilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = x_unfilled.png; sourceTree = "<group>"; };
+		B482C37D16AB16B700F1C41D /* RayCastCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RayCastCallback.h; sourceTree = "<group>"; };
 		B4C6D7C6169BC3CF004C0D9F /* CutCutCut.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CutCutCut.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4C6D7CA169BC3CF004C0D9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B4C6D7CC169BC3CF004C0D9F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -718,6 +719,7 @@
 				B4C6D9EE169BC3D2004C0D9F /* IntroLayer.mm */,
 				B4C6D9F0169BC3D2004C0D9F /* GLES-Render.h */,
 				B4C6D9F1169BC3D2004C0D9F /* GLES-Render.mm */,
+				B482C37D16AB16B700F1C41D /* RayCastCallback.h */,
 				B4C6D7DD169BC3CF004C0D9F /* Resources */,
 				B4C6D7F7169BC3D0004C0D9F /* libs */,
 				B4C6D9E3169BC3D2004C0D9F /* Supporting Files */,
