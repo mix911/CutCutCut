@@ -11,8 +11,7 @@
 
 // Needed to obtain the Navigation Controller
 #import "AppDelegate.h"
-
-#import "PhysicsSprite.h"
+#import "Watermelon.h"
 
 enum {
 	kTagParentNode = 1,
@@ -23,11 +22,11 @@ enum {
 
 @interface HelloWorldLayer()
 -(void) initPhysics;
--(void) addNewSpriteAtPosition:(CGPoint)p;
--(void) createMenu;
 @end
 
 @implementation HelloWorldLayer
+
+@synthesize cache = cache_;
 
 +(CCScene *) scene
 {
@@ -46,44 +45,19 @@ enum {
 
 -(id) init
 {
-	if( (self=[super init])) {
-		
-		// enable events
-		
-		self.isTouchEnabled = YES;
-		self.isAccelerometerEnabled = YES;
-		CGSize s = [CCDirector sharedDirector].winSize;
-		
-		// init physics
-		[self initPhysics];
-		
-		// create reset button
-		[self createMenu];
-		
-		//Set up sprite
-		
-#if 1
-		// Use batch node. Faster
-		CCSpriteBatchNode *parent = [CCSpriteBatchNode batchNodeWithFile:@"blocks.png" capacity:100];
-		spriteTexture_ = [parent texture];
-#else
-		// doesn't use batch node. Slower
-		spriteTexture_ = [[CCTextureCache sharedTextureCache] addImage:@"blocks.png"];
-		CCNode *parent = [CCNode node];
-#endif
-		[self addChild:parent z:0 tag:kTagParentNode];
-		
-		
-		[self addNewSpriteAtPosition:ccp(s.width/2, s.height/2)];
-		
-		CCLabelTTF *label = [CCLabelTTF labelWithString:@"Tap screen" fontName:@"Marker Felt" fontSize:32];
-		[self addChild:label z:0];
-		[label setColor:ccc3(0,0,255)];
-		label.position = ccp( s.width/2, s.height-50);
-		
-		[self scheduleUpdate];
-	}
-	return self;
+	if (self=[super init]) {
+        self.isTouchEnabled = YES;
+        self.isAccelerometerEnabled = YES;
+        
+        // Инициализируем физику
+        [self initPhysics];
+        
+        [self initSprites];
+        
+        [self scheduleUpdate];
+    }
+    
+    return self;
 }
 
 -(void) dealloc
@@ -93,57 +67,22 @@ enum {
 	
 	delete m_debugDraw;
 	m_debugDraw = NULL;
+    
+    [cache_ release];
+    cache_ = nil;
 	
 	[super dealloc];
 }	
 
--(void) createMenu
+-(void) initSprites
 {
-	// Default font size will be 22 points.
-	[CCMenuItemFont setFontSize:22];
-	
-	// Reset Button
-	CCMenuItemLabel *reset = [CCMenuItemFont itemWithString:@"Reset" block:^(id sender){
-		[[CCDirector sharedDirector] replaceScene: [HelloWorldLayer scene]];
-	}];
-	
-	// Achievement Menu Item using blocks
-	CCMenuItem *itemAchievement = [CCMenuItemFont itemWithString:@"Achievements" block:^(id sender) {
-		
-		
-		GKAchievementViewController *achivementViewController = [[GKAchievementViewController alloc] init];
-		achivementViewController.achievementDelegate = self;
-		
-		AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-		
-		[[app navController] presentModalViewController:achivementViewController animated:YES];
-		
-		[achivementViewController release];
-	}];
-	
-	// Leaderboard Menu Item using blocks
-	CCMenuItem *itemLeaderboard = [CCMenuItemFont itemWithString:@"Leaderboard" block:^(id sender) {
-		
-		
-		GKLeaderboardViewController *leaderboardViewController = [[GKLeaderboardViewController alloc] init];
-		leaderboardViewController.leaderboardDelegate = self;
-		
-		AppController *app = (AppController*) [[UIApplication sharedApplication] delegate];
-		
-		[[app navController] presentModalViewController:leaderboardViewController animated:YES];
-		
-		[leaderboardViewController release];
-	}];
-	
-	CCMenu *menu = [CCMenu menuWithItems:itemAchievement, itemLeaderboard, reset, nil];
-	
-	[menu alignItemsVertically];
-	
-	CGSize size = [[CCDirector sharedDirector] winSize];
-	[menu setPosition:ccp( size.width/2, size.height/2)];
-	
-	
-	[self addChild: menu z:-1];	
+    cache_ = [[CCArray alloc] initWithCapacity:53];
+    
+    PolygonSprite* sprite = [[Watermelon alloc] initWithWorld:world];
+    [self addChild:sprite z:1];
+    
+    [sprite activateCollisiions];
+    [cache_ addObject:sprite];
 }
 
 -(void) initPhysics
@@ -216,44 +155,10 @@ enum {
 	
 	kmGLPushMatrix();
 	
+    ccDrawLine(startPoint_, endPoint_);
 	world->DrawDebugData();	
 	
 	kmGLPopMatrix();
-}
-
--(void) addNewSpriteAtPosition:(CGPoint)p
-{
-	CCLOG(@"Add sprite %0.2f x %02.f",p.x,p.y);
-	CCNode *parent = [self getChildByTag:kTagParentNode];
-	
-	//We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
-	//just randomly picking one of the images
-	int idx = (CCRANDOM_0_1() > .5 ? 0:1);
-	int idy = (CCRANDOM_0_1() > .5 ? 0:1);
-	PhysicsSprite *sprite = [PhysicsSprite spriteWithTexture:spriteTexture_ rect:CGRectMake(32 * idx,32 * idy,32,32)];						
-	[parent addChild:sprite];
-	
-	sprite.position = ccp( p.x, p.y);
-	
-	// Define the dynamic body.
-	//Set up a 1m squared box in the physics world
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(p.x/PTM_RATIO, p.y/PTM_RATIO);
-	b2Body *body = world->CreateBody(&bodyDef);
-	
-	// Define another box shape for our dynamic body.
-	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(.5f, .5f);//These are mid points for our 1m box
-	
-	// Define the dynamic body fixture.
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &dynamicBox;	
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	body->CreateFixture(&fixtureDef);
-	
-	[sprite setPhysicsBody:body];
 }
 
 -(void) update: (ccTime) dt
@@ -268,7 +173,25 @@ enum {
 	
 	// Instruct the world to perform a single step of simulation. It is
 	// generally best to keep the time step and iterations fixed.
-	world->Step(dt, velocityIterations, positionIterations);	
+	world->Step(dt, velocityIterations, positionIterations);
+}
+
+-(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    for (UITouch* touch in touches) {
+        CGPoint location = [touch locationInView:[touch view]];
+        location = [[CCDirector sharedDirector] convertToGL:location];
+        startPoint_ = endPoint_ = location;
+    }
+}
+
+-(void) ccTouchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    for (UITouch* touch in touches) {
+        CGPoint location = [touch locationInView:[touch view]];
+        location = [[CCDirector sharedDirector] convertToGL:location];
+        endPoint_=location;
+    }
 }
 
 - (void)ccTouchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -278,8 +201,6 @@ enum {
 		CGPoint location = [touch locationInView: [touch view]];
 		
 		location = [[CCDirector sharedDirector] convertToGL: location];
-		
-		[self addNewSpriteAtPosition: location];
 	}
 }
 

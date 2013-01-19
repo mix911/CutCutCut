@@ -23,10 +23,14 @@
 // HelloWorldLayer
 @interface HelloWorldLayer : CCLayer <GKAchievementViewControllerDelegate, GKLeaderboardViewControllerDelegate>
 {
-	CCTexture2D *spriteTexture_;	// weak ref
 	b2World* world;					// strong ref
 	GLESDebugDraw *m_debugDraw;		// strong ref
+    CCArray* cache_;
+    CGPoint startPoint_;
+    CGPoint endPoint_;
 }
+
+@property(nonatomic, retain)CCArray* cache;
 
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
