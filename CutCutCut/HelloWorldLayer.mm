@@ -53,6 +53,7 @@ enum {
         [self initPhysics];
         
         [self initSprites];
+        raycastCallback = new RaycastCallback();
         
         [self scheduleUpdate];
     }
@@ -202,6 +203,16 @@ enum {
 		
 		location = [[CCDirector sharedDirector] convertToGL: location];
 	}
+    
+    if (endPoint_.x != startPoint_.x || endPoint_.y != startPoint_.y) {
+        world->RayCast(raycastCallback,
+                       b2Vec2(startPoint_.x / PTM_RATIO, startPoint_.y / PTM_RATIO),
+                       b2Vec2(endPoint_.x / PTM_RATIO, endPoint_.y / PTM_RATIO));
+        
+        world->RayCast(raycastCallback,
+                       b2Vec2(endPoint_.x / PTM_RATIO, endPoint_.y / PTM_RATIO),
+                       b2Vec2(startPoint_.x / PTM_RATIO, startPoint_.y / PTM_RATIO));
+    }
 }
 
 #pragma mark GameKit delegate
