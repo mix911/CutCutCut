@@ -41,6 +41,7 @@ int comparator(const void* a, const void* b)
 @implementation HelloWorldLayer
 
 @synthesize cache = cache_;
+@synthesize blades= blades_;
 
 +(CCScene *) scene
 {
@@ -76,7 +77,19 @@ int comparator(const void* a, const void* b)
         
         [self initSprites];
         [self initBackground];
-        raycastCallback = new RaycastCallback();
+        raycastCallback_ = new RaycastCallback();
+        
+        deltaRemainder_ = 0.0f;
+        blades_ = [[CCArray alloc] initWithCapacity:3];
+        CCTexture2D* texture = [[CCTextureCache sharedTextureCache] addImage:@"streak.png"];
+        for (int i = 0; i < 3; ++i) {
+            CCBlade* blade = [CCBlade bladeWithMaximumPoint:50];
+            blade.autoDim = NO;
+            blade.texture = texture;
+            
+            [self addChild:blade z:2];
+            [blades_ addObject:blade];
+        }
         
         [self scheduleUpdate];
     }
@@ -94,6 +107,9 @@ int comparator(const void* a, const void* b)
     
     [cache_ release];
     cache_ = nil;
+    
+    [blades_ release];
+    blades_ = nil;
 	
 	[super dealloc];
 }	
@@ -200,6 +216,13 @@ int comparator(const void* a, const void* b)
 	world->Step(dt, velocityIterations, positionIterations);
     
     [self checkAndSliceObjects];
+    
+    if ([blade_.path count] > 3) {
+        deltaRemainder_ += dt * 60 * 1.2f;
+        int pop = (int)roundf(deltaRemainder_);
+        deltaRemainder_ -= pop;
+        [blade_ pop:pop];
+    }
 }
 
 -(void) ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -208,6 +231,15 @@ int comparator(const void* a, const void* b)
         CGPoint location = [touch locationInView:[touch view]];
         location = [[CCDirector sharedDirector] convertToGL:location];
         startPoint_ = endPoint_ = location;
+        
+        CCBlade* blade;
+        CCARRAY_FOREACH(blades_, blade)
+        {
+            if (blade.path.count == 0) {
+                blade_ = blade;
+                [blade_ push:location];
+            }
+        }
     }
 }
 
@@ -217,13 +249,15 @@ int comparator(const void* a, const void* b)
         CGPoint location = [touch locationInView:[touch view]];
         location = [[CCDirector sharedDirector] convertToGL:location];
         endPoint_=location;
+        
+        [blade_ push:location];
     }
     
     if (ccpLengthSQ(ccpSub(startPoint_, endPoint_)) > 25) {
-        world->RayCast(raycastCallback,
+        world->RayCast(raycastCallback_,
                        b2Vec2(startPoint_.x / PTM_RATIO, startPoint_.y / PTM_RATIO),
                        b2Vec2(endPoint_.x / PTM_RATIO, endPoint_.y / PTM_RATIO));
-        world->RayCast(raycastCallback,
+        world->RayCast(raycastCallback_,
                        b2Vec2(endPoint_.x / PTM_RATIO, endPoint_.y / PTM_RATIO),
                        b2Vec2(startPoint_.x / PTM_RATIO, startPoint_.y / PTM_RATIO));
         startPoint_ = endPoint_;
@@ -240,6 +274,8 @@ int comparator(const void* a, const void* b)
 	}
     
     [self clearSlices];
+    
+    [blade_ dim:YES];
 }
 
 #pragma mark GameKit delegate

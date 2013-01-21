@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B4102BFD16ACF2EB0013CD90 /* CCBlade.mm in Sources */ = {isa = PBXBuildFile; fileRef = B4102BFC16ACF2EB0013CD90 /* CCBlade.mm */; };
 		B482C33E16AACB6000F1C41D /* PolygonSprite.mm in Sources */ = {isa = PBXBuildFile; fileRef = B482C33D16AACB6000F1C41D /* PolygonSprite.mm */; };
 		B482C34216AB093900F1C41D /* Watermelon.mm in Sources */ = {isa = PBXBuildFile; fileRef = B482C34116AB093900F1C41D /* Watermelon.mm */; };
 		B482C36016AB0B9400F1C41D /* banana-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = B482C34416AB0B9400F1C41D /* banana-hd.png */; };
@@ -217,6 +218,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B4102BFB16ACF2EB0013CD90 /* CCBlade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBlade.h; path = ../CCBlade.h; sourceTree = "<group>"; };
+		B4102BFC16ACF2EB0013CD90 /* CCBlade.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CCBlade.mm; path = ../CCBlade.mm; sourceTree = "<group>"; };
 		B482C33C16AACB6000F1C41D /* PolygonSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolygonSprite.h; sourceTree = "<group>"; };
 		B482C33D16AACB6000F1C41D /* PolygonSprite.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PolygonSprite.mm; sourceTree = "<group>"; };
 		B482C34016AB093900F1C41D /* Watermelon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Watermelon.h; sourceTree = "<group>"; };
@@ -639,6 +642,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B4102C0216ACF3410013CD90 /* CBlade */ = {
+			isa = PBXGroup;
+			children = (
+				B4102BFB16ACF2EB0013CD90 /* CCBlade.h */,
+				B4102BFC16ACF2EB0013CD90 /* CCBlade.mm */,
+			);
+			name = CBlade;
+			sourceTree = "<group>";
+		};
 		B482C34316AB0B9400F1C41D /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -710,6 +722,7 @@
 		B4C6D7DC169BC3CF004C0D9F /* CutCutCut */ = {
 			isa = PBXGroup;
 			children = (
+				B4102C0216ACF3410013CD90 /* CBlade */,
 				B4C6D9FF169BC80A004C0D9F /* PRKit */,
 				B4C6D9E7169BC3D2004C0D9F /* AppDelegate.h */,
 				B4C6D9E8169BC3D2004C0D9F /* AppDelegate.mm */,
@@ -1527,6 +1540,7 @@
 				B482C33E16AACB6000F1C41D /* PolygonSprite.mm in Sources */,
 				B482C34216AB093900F1C41D /* Watermelon.mm in Sources */,
 				B482C38416AB1CF100F1C41D /* RaycastCallback.mm in Sources */,
+				B4102BFD16ACF2EB0013CD90 /* CCBlade.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
